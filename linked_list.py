@@ -7,7 +7,16 @@ class LinkedList:
     def __init__(self):
         self.head = None
         self.last_node = None
-
+    
+    def to_list(self):
+        l = []
+        if self.head is None:
+            return l
+        node = self.head
+        while node:
+            l.append(node.data)
+            node = node.next_node 
+        return l
     def print_linked_list(self):
         linked_list_string = ""
         node = self.head

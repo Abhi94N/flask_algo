@@ -23,7 +23,7 @@ db = SQLAlchemy(app)
 now = datetime.now()
 
 # models 
-class user(db.Model):
+class User(db.Model):
     __tablename__ = "user"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50))
@@ -44,7 +44,18 @@ class BlogPost(db.Model):
 # routes
 @app.route("/user", methods=["POST"])
 def create_user():
-    pass  
+    # request provided by flask
+    data = request.get_json()
+    new_user = User(
+        name=data["name"],
+        email=data["email"],
+        address=data["address"],
+        phone=data["phone"],
+    )
+    db.session.add(new_user)
+    db.session.commit()
+    # response for request and 200
+    return jsonify({"message": "User created"}), 200
 
 @app.route("/user/descending_id", methods=["GET"])
 def get_all_users_descending():

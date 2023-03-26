@@ -31,13 +31,6 @@ class LinkedList:
             print(data)
             self.insert_beginning(data)
             return
-        # if self.last_node is None:
-        #     node = self.head
-            # while node.next_node:
-            #     node = node.next_node
-
-            # node.next_node = Node(data, None)
-            # self.last_node = node.next_node
         else:
             self.last_node.next_node = Node(data, None)
             self.last_node = self.last_node.next_node

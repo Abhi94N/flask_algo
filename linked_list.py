@@ -47,16 +47,3 @@ class LinkedList:
 
         self.last_node.next_node = Node(data, None)
         self.last_node = self.last_node.next_node
-
-
-linked_list = LinkedList()
-linked_list.insert_beginning("data0")
-linked_list.insert_beginning("data1")
-linked_list.insert_beginning("data2")
-linked_list.insert_beginning("data3")
-linked_list.insert_beginning("data4")
-linked_list.insert_beginning("data5")
-linked_list.insert_beginning("data6")
-linked_list.print_linked_list()
-linked_list.insert_at_end("data7")
-linked_list.print_linked_list()

@@ -31,7 +31,7 @@ class User(db.Model):
     email = db.Column(db.String(50))
     address = db.Column(db.String(200))
     phone = db.Column(db.String(50))
-    posts = db.relationship("BlogPost")
+    posts = db.relationship("BlogPost", cascade="all, delete")
 
 class BlogPost(db.Model):
     __tablename__ = "blogpost"
@@ -60,7 +60,7 @@ def create_user():
 
 @app.route("/user/descending_id", methods=["GET"])
 def get_all_users_descending():
-    # gets data by ascending order
+    # gets data by descending order
     users = User.query.all()
     all_users_linked_list = linked_list.LinkedList()
     for user in users:
@@ -77,16 +77,58 @@ def get_all_users_descending():
 
 @app.route("/user/ascending_id", methods=["GET"])
 def get_all_users_ascending():
-    pass
+    # gets data by ascending order
+    users = User.query.all()
+    all_users_linked_list = linked_list.LinkedList()
+    for user in users:
+        all_users_linked_list.insert_at_end(
+            {
+                "id": user.id,
+                "name": user.name,
+                "email": user.email,
+                "address": user.address,
+                "phone": user.phone,
+            }
+        )
+    return jsonify(all_users_linked_list.to_list()), 200
 
 @app.route("/user/<user_id>", methods=["GET"])
 def get_one_user(user_id):
-    pass
-
+    users = User.query.all()
+    all_users_linked_list = linked_list.LinkedList()
+    for user in users:
+        all_users_linked_list.insert_beginning(
+            {
+                "id": user.id,
+                "name": user.name,
+                "email": user.email,
+                "address": user.address,
+                "phone": user.phone,
+            }
+        )
+    user = all_users_linked_list.get_user_by_id(user_id)
+    if user:
+        return jsonify(user), 200
+    return "User Does not Exist", 404
 
 @app.route("/user/<user_id>", methods=["DELETE"])
 def delete_user(user_id):
-    pass
+    user = User.query.filter_by(id=user_id).first()
+    if user is None:
+        return "User Does not Exist", 404
+    db.session.delete(user)
+    db.session.commit()
+    deleted_user = {
+        "status": f"{user.name} has been deleted",
+        "id": user.id,
+        "name": user.name,
+        "email": user.email,
+        "address": user.address,
+        "phone": user.phone,
+    }
+    if user:
+        return jsonify(deleted_user), 200
+    
 
 @app.route("/blog_post/<user_id>", methods=["POST"])
 def create_blog_post(user_id):

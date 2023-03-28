@@ -75,10 +75,3 @@ class HashTable:
                 # if value is none print out the value
                 print(f" [{i}] {val}")
         print("}")
-
-ht = HashTable(4)
-ht.add_key_value("hi", "there")
-ht.add_key_value("hi", "Abhi")
-ht.add_key_value("bye", "James")
-ht.add_key_value("later", "Sangu")
-ht.print_table()

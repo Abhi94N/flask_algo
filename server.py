@@ -5,6 +5,7 @@ from sqlalchemy import event
 from sqlalchemy.engine import Engine 
 from flask_sqlalchemy  import SQLAlchemy
 import linked_list 
+import hash_table
 
 #app
 app = Flask(__name__)
@@ -56,7 +57,7 @@ def create_user():
     db.session.add(new_user)
     db.session.commit()
     # response for request and 200
-    return jsonify({"message": "User created"}), 200
+    return jsonify({"message": "User created"}), 201
 
 @app.route("/user/descending_id", methods=["GET"])
 def get_all_users_descending():
@@ -109,13 +110,13 @@ def get_one_user(user_id):
     user = all_users_linked_list.get_user_by_id(user_id)
     if user:
         return jsonify(user), 200
-    return "User Does not Exist", 404
+    return "User Does not Exist", 400
 
 @app.route("/user/<user_id>", methods=["DELETE"])
 def delete_user(user_id):
     user = User.query.filter_by(id=user_id).first()
     if user is None:
-        return "User Does not Exist", 404
+        return "User Does not Exist", 400
     db.session.delete(user)
     db.session.commit()
     deleted_user = {
@@ -132,7 +133,35 @@ def delete_user(user_id):
 
 @app.route("/blog_post/<user_id>", methods=["POST"])
 def create_blog_post(user_id):
-    pass
+    data = request.get_json()
+
+    user = User.query.filter_by(id=user_id).first()
+
+    if not user:
+        return jsonify({"message": "user does not exist!"}), 400
+
+    ht = hash_table.HashTable(10)
+
+    ht.add_key_value("title", data["title"])
+    ht.add_key_value("body", data["body"])
+    ht.add_key_value("date", now)
+    ht.add_key_value("user_id", user_id)
+
+    ht.print_table()
+
+    new_blog_post = BlogPost(
+        title=ht.get_value("title"),
+        body=ht.get_value("body"),
+        date=ht.get_value("date"),
+        user_id=ht.get_value("user_id"),
+    )
+    db.session.add(new_blog_post)
+    db.session.commit()
+
+    return jsonify({"message": "new blog post created"}), 201
+
+
+
 
 @app.route("/user/<user_id>", methods=["GET"])
 def get_all_blog_posts(user_id):
